@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: vaultx-frontend:latest
+    container_name: vaultx_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - vaultx_net
+
+  # ── Replace this stub with your real backend service ──────────────────────
+  backend:
+    image: vaultx-backend:latest      # build your backend image separately
+    container_name: vaultx_backend
+    restart: unless-stopped
+    expose:
+      - "8000"                        # only reachable inside the Docker network
+    networks:
+      - vaultx_net
+  # ──────────────────────────────────────────────────────────────────────────
+
+networks:
+  vaultx_net:
+    driver: bridge
