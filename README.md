@@ -1,74 +1,70 @@
-# React + TypeScript + Vite
+# VaultX — Secure File Vault
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A zero-knowledge file encryption web app built with React, TypeScript, and Vite. VaultX lets you encrypt, decrypt, and share files directly in the browser using military-grade AES-256-GCM encryption — the server stores nothing.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Encrypt** — Upload any file and encrypt it with AES-256-GCM using a Device ID as the key seed. The key is derived in-memory via PBKDF2 with 480,000 iterations and immediately discarded.
+- **Decrypt** — Upload a `.vaultx` encrypted file and provide the original Device ID to restore the original file.
+- **Share** — Encrypt a file with a randomly generated 256-bit server-side key. The key is returned to you once and never stored — share it with the recipient out-of-band.
 
-## React Compiler
+## Security Model
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Keys are computed in memory per request and never logged or persisted.
+- Files are processed in isolated temporary directories that are deleted after each response.
+- The server is zero-storage: it never retains uploaded files or derived keys.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Layer | Technology |
+|---|---|
+| UI Framework | React 19 + TypeScript |
+| Build Tool | Vite 8 |
+| Styling | Tailwind CSS v4 |
+| Containerization | Docker (multi-stage) + Nginx |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Development
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Production (Docker)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+docker compose up --build
 ```
-# crypto_front
+
+The app is served on port 80 via Nginx in the production container.
+
+### Build
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+src/
+├── api/
+│   └── vault.ts          # API calls: encrypt, decrypt, share
+├── components/
+│   ├── EncryptTab.tsx    # Encrypt tab UI
+│   ├── DecryptTab.tsx    # Decrypt tab UI
+│   ├── ShareTab.tsx      # Share tab UI
+│   └── FileDropzone.tsx  # Drag-and-drop file input
+└── App.tsx               # Tab layout and routing
+```
+
+## Cryptography
+
+| Primitive | Detail |
+|---|---|
+| Cipher | AES-256-GCM |
+| KDF | PBKDF2 — 480,000 iterations |
+| Share keys | 256-bit random, single-use |
+| Encrypted file extension | `.vaultx` |
