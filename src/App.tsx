@@ -17,7 +17,7 @@ const TAB_ACTIVE: Record<Tab, string> = {
   share:   'bg-zinc-800 text-fuchsia-300 shadow-sm ring-1 ring-zinc-700',
 }
 
-const CHIPS = ['AES-256-GCM', 'Zero-storage', 'PBKDF2 480K', 'Share keys']
+const CHIPS = [ 'Zero-storage', 'Share keys']
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('encrypt')
@@ -62,9 +62,6 @@ export default function App() {
               <span className="text-zinc-100">Secure</span>{' '}
               <span className="grad-text">File Vault</span>
             </h1>
-            <p className="mx-auto max-w-xs text-sm leading-relaxed text-zinc-500">
-              AES-256-GCM encryption. Your keys are used in-memory and immediately discarded — the server stores nothing.
-            </p>
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
               {CHIPS.map(c => (
                 <span
@@ -115,11 +112,6 @@ export default function App() {
               temp directories deleted after each response.
             </p>
           </div>
-
-          {/* Footer */}
-          <p className="mt-6 text-center font-mono text-[10px] text-zinc-700">
-            AES-256-GCM · PBKDF2 480K iterations · VaultX v3.0
-          </p>
 
         </div>
       </div>
