@@ -41,7 +41,8 @@ export async function decryptFile(file: File, key: string): Promise<DecryptResul
   const contentType = res.headers.get('content-type') ?? 'application/octet-stream'
   const disposition = res.headers.get('content-disposition') ?? ''
   const match = disposition.match(/filename="([^"]+)"/)
-  const filename = match ? match[1] : file.name.replace(/\.vaultx$/, '')
+  const raw = match ? match[1] : file.name.replace(/\.vaultx$/, '')
+  const filename = raw.replace(/[/\\:*?"<>|]/g, '_').replace(/\.\.+/g, '.').trim() || 'decrypted'
 
   const blob = await res.blob()
   return { blob, filename, contentType }

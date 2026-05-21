@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import type { DragEvent } from 'react'
 
+const MAX_BYTES = 100 * 1024 * 1024 // 100 MB — matches nginx client_max_body_size
+
 interface Props {
   file: File | null
   onChange: (f: File | null) => void
@@ -30,12 +32,19 @@ export default function FileDropzone({
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
+  const [sizeError, setSizeError] = useState(false)
+
+  function pick(f: File | undefined) {
+    if (!f) return
+    if (f.size > MAX_BYTES) { setSizeError(true); return }
+    setSizeError(false)
+    onChange(f)
+  }
 
   const handleDrop = (e: DragEvent) => {
     e.preventDefault()
     setDragging(false)
-    const f = e.dataTransfer.files[0]
-    if (f) onChange(f)
+    pick(e.dataTransfer.files[0])
   }
 
   const borderClass = dragging
@@ -45,24 +54,29 @@ export default function FileDropzone({
       : 'border-dashed border-zinc-700 bg-transparent hover:border-zinc-500 hover:bg-zinc-800/40'
 
   return (
-    <div
-      onClick={() => inputRef.current?.click()}
-      onDragOver={e => { e.preventDefault(); setDragging(true) }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={handleDrop}
-      className={`cursor-pointer rounded-xl border-2 transition-all duration-200 ${borderClass}`}
-    >
-      <input
-        ref={inputRef}
-        type="file"
-        accept={accept}
-        className="hidden"
-        onChange={e => onChange(e.target.files?.[0] ?? null)}
-        onClick={e => e.stopPropagation()}
-      />
+    <>
+      <div
+        onClick={() => inputRef.current?.click()}
+        onDragOver={e => { e.preventDefault(); setDragging(true) }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={handleDrop}
+        className={`cursor-pointer rounded-xl border-2 transition-all duration-200 ${borderClass}`}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          className="hidden"
+          onChange={e => pick(e.target.files?.[0])}
+          onClick={e => e.stopPropagation()}
+        />
 
-      {file ? <FilledState file={file} variant={variant} onRemove={() => onChange(null)} /> : <EmptyState label={label} dragging={dragging} />}
-    </div>
+        {file ? <FilledState file={file} variant={variant} onRemove={() => { onChange(null); setSizeError(false) }} /> : <EmptyState label={label} dragging={dragging} />}
+      </div>
+      {sizeError && (
+        <p className="mt-1.5 pl-1 text-xs text-red-400">File exceeds the 100 MB limit.</p>
+      )}
+    </>
   )
 }
 
