@@ -50,7 +50,7 @@ export default function EncryptTab() {
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-            Device ID{" "}
+            Key word{" "}
             <span className="text-red-500 normal-case tracking-normal font-normal">
               *
             </span>
@@ -65,7 +65,7 @@ export default function EncryptTab() {
             value={deviceId}
             onChange={(e) => setDeviceId(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="Your secret device identifier"
+            placeholder="Your secret key word"
             className="w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-3 pr-12 text-sm text-zinc-100 placeholder:text-zinc-600 transition-all focus:border-cyan-500/60 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
             autoComplete="off"
           />

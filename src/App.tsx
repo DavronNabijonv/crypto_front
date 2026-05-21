@@ -2,6 +2,9 @@ import { useState } from 'react'
 import EncryptTab from './components/EncryptTab'
 import DecryptTab from './components/DecryptTab'
 import ShareTab from './components/ShareTab'
+import HowItWorksModal from './components/HowItWorksModal'
+
+const GUIDE_KEY = 'vaultx_guide_seen'
 
 type Tab = 'encrypt' | 'decrypt' | 'share'
 
@@ -21,6 +24,10 @@ const CHIPS = [ 'Zero-storage', 'Share keys']
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('encrypt')
+  const [guideOpen, setGuideOpen] = useState(() => !localStorage.getItem(GUIDE_KEY))
+
+  function openGuide()  { setGuideOpen(true) }
+  function closeGuide() { localStorage.setItem(GUIDE_KEY, '1'); setGuideOpen(false) }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -50,6 +57,13 @@ export default function App() {
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
                 Zero-storage
               </span>
+              <button
+                onClick={openGuide}
+                title="How it works"
+                className="flex h-6 w-6 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800/60 text-zinc-500 transition-colors hover:border-zinc-600 hover:text-zinc-300"
+              >
+                <QuestionIcon className="h-3 w-3" />
+              </button>
               <span className="rounded border border-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-600">
                 v3.0
               </span>
@@ -115,6 +129,8 @@ export default function App() {
 
         </div>
       </div>
+
+      {guideOpen && <HowItWorksModal onClose={closeGuide} />}
     </div>
   )
 }
@@ -131,6 +147,14 @@ function ShieldIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  )
+}
+
+function QuestionIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
     </svg>
   )
 }
