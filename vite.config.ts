@@ -1,14 +1,30 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import obfuscatorPlugin from "vite-plugin-javascript-obfuscator";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    obfuscatorPlugin({
+      options: {
+        compact: true,
+        controlFlowFlattening: true,
+        controlFlowFlatteningThreshold: 0.75,
+        stringArray: true,
+        stringArrayEncoding: ["rc4"],
+        stringArrayRotate: true,
+        selfDefending: true,
+        debugProtection: false,
+      },
+    }),
+  ],
   server: {
     proxy: {
-      '/encrypt': 'http://localhost:8000',
-      '/decrypt': 'http://localhost:8000',
-      '/share': 'http://localhost:8000',
+      "/encrypt": "http://localhost:8000",
+      "/decrypt": "http://localhost:8000",
+      "/share": "http://localhost:8000",
     },
   },
-})
+});
