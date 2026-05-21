@@ -40,7 +40,7 @@ export default function App() {
           {/* Header */}
           <header className="anim-0 mb-10 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 shadow-lg shadow-cyan-900/40">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 to-violet-600 shadow-lg shadow-cyan-900/40">
                 <LockIcon className="h-4 w-4 text-white" />
               </div>
               <span className="text-sm font-bold tracking-tight text-zinc-100">VaultX</span>
